@@ -1,0 +1,41 @@
+version: '3'
+
+networks:
+  db-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.8.0.0/16
+
+
+services:
+  db:
+    image: postgres:10.6
+    hostname: db
+    restart: unless-stopped
+    environment:
+      - POSTGRES_PASSWORD=dev_password
+      - POSTGRES_USER=dev_user
+      - POSTGRES_DB=aiohttp_example
+    volumes:
+      - db:/var/lib/postgresql
+    ports:
+      - 5434:5432
+    networks:
+      db-net:
+        ipv4_address: 10.8.0.2
+
+
+#  nginx:
+#    image: nginx
+#    volumes:
+#      - ./dockerfile/dev-env/nginx/custom_nginx.conf:/etc/nginx/nginx.conf
+#    ports:
+#      - "8080:80"
+#    networks:
+#      db-net:
+#        ipv4_address: 10.8.0.2
+
+
+volumes:
+  db:
