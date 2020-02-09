@@ -1,3 +1,5 @@
+from typing import Sequence
+
 from asyncpg.pool import Pool
 
 from apps.users.data import User, UserDataAccess
@@ -9,3 +11,6 @@ class UserService:
 
     async def get_user(self, pk: int) -> User:
         return await self.db.get_user(pk)
+
+    async def get_users_list(self) -> Sequence[User]:
+        return await self.db.get_users()

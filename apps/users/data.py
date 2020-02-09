@@ -1,5 +1,6 @@
 import string
 import uuid
+from typing import Sequence
 
 from asyncpg.pool import Pool
 
@@ -14,7 +15,7 @@ class User:
         self.id: uuid = user_id
 
     def __str__(self):
-        return
+        return f'{self.id}:{self.name} {self.surname}'
 
     def to_json(self, fields):
         return {field_name: str(getattr(self, field_name)) for field_name in fields}
@@ -33,3 +34,11 @@ class UserDataAccess:
                 WHERE users.id = $1
             ''', pk)
             return User(**result)
+
+    async def get_users(self) -> Sequence[User]:
+        async with self.conn_pool.acquire() as connection:
+            result = await connection.fetch(f'''
+                SELECT id as user_id, name, surname, address FROM users
+            ''')
+            users = [User(**item) for item in result]
+            return users

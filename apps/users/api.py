@@ -1,11 +1,7 @@
 from aiohttp import web
 
-from apps.users.serializer import UserSerializer
+from apps.users.serializer import UserSerializer, ListUserSerializer
 from apps.users.services import UserService
-
-
-async def create_user(request):
-    return web.Response()
 
 
 class UserView(web.View):
@@ -25,8 +21,15 @@ class UserView(web.View):
         return web.json_response(result)
 
     async def post(self) -> web.Response:
-        return await create_user(self.request)
+        pass
 
 
-async def get_users_list_api(request) -> web.Response:
-    pass
+async def get_users_list(request) -> web.Response:
+    pool = request.app['pool']
+    user_service = UserService(pool)
+    users = await user_service.get_users_list()
+
+    serializer = ListUserSerializer()
+    result = [serializer.to_representation(user) for user in users]
+
+    return web.json_response(result)

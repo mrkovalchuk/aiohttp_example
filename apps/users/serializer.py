@@ -19,4 +19,4 @@ class UserSerializer:
 
 
 class ListUserSerializer(UserSerializer):
-    exclude_fields = {}
+    exclude_fields = set()
