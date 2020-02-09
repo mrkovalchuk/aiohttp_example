@@ -1,4 +1,4 @@
-from typing import Sequence
+from typing import Sequence, Dict
 
 from asyncpg.pool import Pool
 
@@ -14,3 +14,6 @@ class UserService:
 
     async def get_users_list(self) -> Sequence[User]:
         return await self.db.get_users()
+
+    async def create_user(self, data: Dict) -> User:
+        return await self.db.create_user(data)

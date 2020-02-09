@@ -1,6 +1,6 @@
 import string
 import uuid
-from typing import Sequence
+from typing import Sequence, Dict
 
 from asyncpg.pool import Pool
 
@@ -42,3 +42,11 @@ class UserDataAccess:
             ''')
             users = [User(**item) for item in result]
             return users
+
+    async def create_user(self, data: Dict) -> User:
+        async with self.conn_pool.acquire() as connection:
+            result = await connection.fetchrow('''
+                INSERT INTO users(name, surname, address) VALUES ($1, $2, $3) RETURNING id
+            ''', data['name'], data['surname'], data['address'])
+
+            return User(**data, user_id=result['id'])
